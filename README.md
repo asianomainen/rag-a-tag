@@ -11,7 +11,7 @@ This chat application uses RAG (Retrieval-Augmented Generation) approach and Ope
 2. Backend extracts entities from the user input. (<code>Tell me about microservice architecture.</code> => <code>Microservice architecture</code>)
 3. Creates embeddings from the entities (<code>Microservice architecture</code> => <code>[0.123124, -0.65324234, 0.345342, ..., 0.95123213]</code>)
 4. Calls Weaviate with hybrid search approach and includes embeddings and the entities
-5. Passes the documents from Weaviate, and the user inputs question to the OpenAI LLM
+5. Passes the documents from Weaviate, and the user input question (<code>Tell me about microservice architecture.</code>) to the OpenAI LLM
 6. Passes the LLM generated response to the frontend
 
 <img src="https://github.com/asianomainen/rag-a-tag/blob/main/docs/images/llm.drawio.png" width="80%" heigth="80%">
