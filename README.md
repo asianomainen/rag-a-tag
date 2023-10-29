@@ -1,11 +1,9 @@
 # A Chat application PoC with RAG and LLMs
 > [Computer Science Project](https://studies.helsinki.fi/courses/course-unit/hy-CU-135235236-2021-08-01) course by University of Helsinki
 
-This chat application use RAG (Retrieval-Augmented Generation) approach and OpenAI's LLM to generate responses to the user.
-
+This chat application uses RAG (Retrieval-Augmented Generation) approach and OpenAI's LLM to generate responses to the user.
 
 ## Quick Architectural overview
-
 
 ### Steps
 
