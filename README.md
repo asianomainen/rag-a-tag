@@ -15,8 +15,8 @@ This chat application uses RAG (Retrieval-Augmented Generation) approach and Ope
 5. Passes the documents from Weaviate, and the user input question (<code>Tell me about microservice architecture.</code>) to the OpenAI LLM
 6. Passes the LLM generated response to the frontend
 
-<img src="https://github.com/asianomainen/rag-a-tag/blob/main/docs/images/llm.drawio.png" width="80%" heigth="80%">
+<img src="https://github.com/asianomainen/rag-a-tag/blob/main/docs/images/llm2.drawio.png" width="80%" heigth="80%">
 
 ## ETL pipeline
 
-<img src="https://github.com/asianomainen/rag-a-tag/blob/main/docs/images/pipeline.drawio.png" width="80%" heigth="80%">
+<img src="https://github.com/asianomainen/rag-a-tag/blob/main/docs/images/pipeline.drawio.png" width="90%" heigth="90%">
