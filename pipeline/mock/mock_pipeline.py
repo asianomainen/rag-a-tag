@@ -26,8 +26,8 @@ class_obj = {
     }
 }
 
-#client.schema.delete_class("ResearchPaper")
-client.schema.create_class(class_obj) # use this if "ResearchPaper" class is not created yet
+#client.schema.delete_class("ResearchPaper") # to delete the class
+#client.schema.create_class(class_obj) # use this if "ResearchPaper" class is not created yet
 
 mock_file = open('mock_data.json')
 data = json.load(mock_file)
@@ -46,3 +46,5 @@ with client.batch as batch:  # Initialize a batch process
             data_object=properties,
             class_name="ResearchPaper"
         )
+
+mock_file.close()
