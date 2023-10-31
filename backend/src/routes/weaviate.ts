@@ -21,7 +21,7 @@ const client: WeaviateClient = weaviate.client({
 weaviateRouter.get("/", async (_req, res) => {
   const generatePrompt = "You are an assistant. Answer ONLY with the facts given as a context. \
               Answer shortly for the questions given by the user. \
-              Question: What is the role of DevOps in software development?";
+              Question: {What is the role of DevOps in software development?}";
 
   const result = await client.graphql
     .get()
