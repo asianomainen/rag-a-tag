@@ -26,5 +26,9 @@
     "parser": "@typescript-eslint/parser",
     "parserOptions": {
       "project": "./backend/tsconfig.json"
-    }
+    },
+    "ignorePatterns": [
+      "node_modules/*",
+      "src/routes/**/*.ts"
+    ]
   }
