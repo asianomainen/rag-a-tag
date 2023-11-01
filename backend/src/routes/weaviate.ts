@@ -67,7 +67,6 @@ weaviateRouter.get("/test", async (_req, res) => {
 
 weaviateRouter.post("/search", async (req, res) => {
   const inputString = req.body.text;
-  console.log(inputString);
 
   if (!inputString) {
     res.status(400).json({ error: "text is required in request body" });
@@ -75,9 +74,6 @@ weaviateRouter.post("/search", async (req, res) => {
 
   const promptText = `You are an entity extractor now. Extract entities from the following text: '${inputString}'`;
   try {
-    console.log({ promptText });
-    console.log({ OPEN_AI_API_URL })
-    console.log({ OPEN_AI_APIKEY })
     const response = await axios.post(
       OPEN_AI_API_URL,
       {
@@ -92,14 +88,14 @@ weaviateRouter.post("/search", async (req, res) => {
         },
       }
     );
-    console.log({ response });
     const entities = response.data.choices[0].message.content.trim();
-    console.log({ entities });
+    const generatePrompt = `You are an assistant. Answer ONLY with the facts given as a context. Answer shortly for the questions given by the user. Question: ${inputString}`;
+    
     const result = await client.graphql
       .get()
       .withClassName("ResearchPaper")
       .withGenerate({
-        groupedTask: inputString,
+        groupedTask: generatePrompt,
         groupedProperties: ["content", "title"],
       })
       .withNearText({
