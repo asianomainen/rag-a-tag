@@ -73,6 +73,11 @@ weaviateRouter.post("/search", async (req, res) => {
     res.status(400).json({ error: "text is required in request body" });
   }
 
+  const generatePrompt =
+    `You are an assistant. Answer ONLY with the facts given as a context. \
+              Answer shortly for the questions given by the user. \
+              Question: ${inputString}`;
+
   const promptText = `You are an entity extractor now. Extract entities from the following text: '${inputString}'`;
   try {
     const response = await axios.post(
@@ -94,7 +99,7 @@ weaviateRouter.post("/search", async (req, res) => {
       .get()
       .withClassName("ResearchPaper")
       .withGenerate({
-        groupedTask: inputString,
+        groupedTask: generatePrompt,
         groupedProperties: ["content", "title"],
       })
       .withNearText({
