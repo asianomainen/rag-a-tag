@@ -1,7 +1,5 @@
-import axios from "axios";
-
 import express from "express";
-
+import axios from "axios";
 import weaviate, { WeaviateClient, ApiKey } from "weaviate-ts-client";
 import {
   OPEN_AI_APIKEY,
@@ -19,57 +17,44 @@ const client: WeaviateClient = weaviate.client({
   headers: { "X-OpenAI-Api-Key": OPEN_AI_APIKEY || "" },
 });
 
-/**
- * POST /api/weaviate
- * @summary Generates response for the user question
- * @param {} request.body.required
- * @return {String} 201 - Created GPT response
- * @return {} 400 - Bad request response
- */
-weaviateRouter.get("/", async (_req, res) => {
-  const generatePrompt =
-    "You are an assistant. Answer ONLY with the facts given as a context. \
-              Answer shortly for the questions given by the user. \
-              Question: {What is the role of DevOps in software development?}";
-
-  const result = await client.graphql
+const executeWeaviateQuery = async (generatePrompt: string, concepts: string[]) => {
+  return await client.graphql
     .get()
     .withClassName("ResearchPaper")
     .withGenerate({
       groupedTask: generatePrompt,
       groupedProperties: ["content", "title"],
     })
-    .withNearText({
-      concepts: ["devops"],
-    })
+    .withNearText({ concepts })
     .withFields("chunk_index")
     .withLimit(4)
     .do();
+};
 
-  // const { userInput } = req.body;
-
-  res.status(201).json({ response: JSON.stringify(result, null, 2) });
+weaviateRouter.get("/", async (_req, res) => {
+  const generatePrompt =
+    "You are an assistant. Answer ONLY with the facts given as a context. " +
+    "Answer shortly for the questions given by the user. " +
+    "Question: {What is the role of DevOps in software development?}";
+  const result = await executeWeaviateQuery(generatePrompt, ["devops"]);
+  res.status(200).json({ response: JSON.stringify(result, null, 2) });
 });
 
 weaviateRouter.get("/test", async (_req, res) => {
   const result = await client.graphql
     .get()
     .withClassName("ResearchPaper")
-    .withHybrid({
-      query: "software",
-    })
+    .withHybrid({ query: "software" })
     .withLimit(3)
     .withFields("title content")
     .do();
-
-  res.status(201).json({ response: JSON.stringify(result, null, 2) });
+  res.status(200).json({ response: JSON.stringify(result, null, 2) });
 });
 
 weaviateRouter.post("/search", async (req, res) => {
   const inputString = req.body.text;
-
   if (!inputString) {
-    res.status(400).json({ error: "text is required in request body" });
+    return res.status(400).json({ error: "text is required in request body" });
   }
 
   const promptText = `You are an entity extractor now. Extract entities from the following text: '${inputString}'`;
@@ -88,33 +73,13 @@ weaviateRouter.post("/search", async (req, res) => {
         },
       }
     );
+
     const entities = response.data.choices[0].message.content.trim();
     const generatePrompt = `You are an assistant. Answer ONLY with the facts given as a context. Answer shortly for the questions given by the user. Question: ${inputString}`;
+    const result = await executeWeaviateQuery(generatePrompt, [entities]);
 
-    const result = await client.graphql
-      .get()
-      .withClassName("ResearchPaper")
-      .withGenerate({
-        groupedTask: generatePrompt,
-        groupedProperties: ["content", "title"],
-      })
-      .withNearText({
-        concepts: [entities],
-      })
-      .withFields("chunk_index")
-      .withLimit(4)
-      .do();
-
-    console.log(JSON.stringify(result, null, 2));
-
-    const groupedResult =
-      result.data.Get.ResearchPaper[0]._additional.generate.groupedResult;
-    const references = result.data.Get.ResearchPaper.map(
-      (item: any) => item.chunk_index
-    ).sort();
-
-    console.log({ groupedResult });
-    console.log({ references });
+    const groupedResult = result.data.Get.ResearchPaper[0]._additional.generate.groupedResult;
+    const references = result.data.Get.ResearchPaper.map((item: any) => item.chunk_index).sort();
 
     const parsedResult = { groupedResult, references };
     res.status(201).json({ response: JSON.stringify(parsedResult, null, 2) });
