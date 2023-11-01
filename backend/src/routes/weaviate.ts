@@ -90,7 +90,7 @@ weaviateRouter.post("/search", async (req, res) => {
     );
     const entities = response.data.choices[0].message.content.trim();
     const generatePrompt = `You are an assistant. Answer ONLY with the facts given as a context. Answer shortly for the questions given by the user. Question: ${inputString}`;
-    
+
     const result = await client.graphql
       .get()
       .withClassName("ResearchPaper")
@@ -105,9 +105,19 @@ weaviateRouter.post("/search", async (req, res) => {
       .withLimit(4)
       .do();
 
-    console.log({ result });
-    // const { userInput } = req.body;
-    res.status(201).json({ response: JSON.stringify(result, null, 2) });
+    console.log(JSON.stringify(result, null, 2));
+
+    const groupedResult =
+      result.data.Get.ResearchPaper[0]._additional.generate.groupedResult;
+    const references = result.data.Get.ResearchPaper.map(
+      (item: any) => item.chunk_index
+    ).sort();
+
+    console.log({ groupedResult });
+    console.log({ references });
+
+    const parsedResult = { groupedResult, references };
+    res.status(201).json({ response: JSON.stringify(parsedResult, null, 2) });
   } catch (error) {
     res.status(500).json({ error });
   }
