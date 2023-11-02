@@ -2,6 +2,7 @@ body {
     margin: 0;
     padding: 0;
     font-family: var(--font-family);
+    font-size: 0.9em;
 }
 
 .main-container {
@@ -17,7 +18,7 @@ body {
     height: 500px;
     width: 800px;
     animation-name: fadeBg;
-    animation-duration: 4s;
+    animation-duration: 6s;
     animation-fill-mode: forwards;
 }
 
@@ -72,4 +73,13 @@ body {
     100% {
         opacity: 1;
     }
+}
+
+.skeleton-fade {
+    transition: opacity 2s ease-out;
+    opacity: 1;
+}
+
+.skeleton-fade-out {
+    opacity: 0;
 }

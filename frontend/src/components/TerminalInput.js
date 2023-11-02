@@ -62,7 +62,12 @@ const TerminalInput = () => {
                 prompt="lcx $"
                 disabled={isLoading}
                 pt={{
-                    commandText: {readOnly: isLoading},
+                    commandText: {
+                        readOnly: isLoading,
+                        style: {
+                            fontSize: 'inherit',
+                        },
+                    },
                     container: {
                         style: {
                             opacity: isLoading ? 0 : 1,
