@@ -75,6 +75,7 @@ weaviateRouter.post('/search', async (req, res) => {
       }
     )
 
+
     const entities = response.data.choices[0].message.content.trim()
     const generatePrompt = `You are an assistant. Answer ONLY with the facts given as a context. Answer shortly for the questions given by the user. Question: ${inputString}`
     const result = await executeWeaviateQuery(generatePrompt, [entities])

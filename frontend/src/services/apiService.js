@@ -1,13 +1,13 @@
-const API_BASE_URL = process.env.REACT_APP_API_BASE_URL || 'http://localhost:3001'
+const API_URL = '/api/weaviate'
 
 export const postPrompt = async (promptText) => {
     try {
-        const response = await fetch(`${API_BASE_URL}/api/weaviate/search`, {
+        const response = await fetch(`${API_URL}/search`, {
             method: 'POST',
             headers: {
-                'Content-Type': 'application/json',
+                'Content-Type': 'application/json'
             },
-            body: JSON.stringify({text: promptText}),
+            body: JSON.stringify({text: promptText})
         })
 
         if (!response.ok) {
