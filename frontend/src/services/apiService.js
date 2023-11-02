@@ -1,13 +1,13 @@
-const API_URL = "/api/weaviate/search"
+const API_URL = '/api/weaviate'
 
 export const postPrompt = async (promptText) => {
     try {
-        const response = await fetch(API_URL, {
+        const response = await fetch(`${API_URL}/search`, {
             method: 'POST',
             headers: {
-                'Content-Type': 'application/json',
+                'Content-Type': 'application/json'
             },
-            body: JSON.stringify({text: promptText}),
+            body: JSON.stringify({text: promptText})
         })
 
         if (!response.ok) {
