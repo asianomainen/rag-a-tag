@@ -4,12 +4,12 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "tsc": "tsc",
-    "dev": "ts-node-dev src/index.ts",
+    "build:backend": "tsc",
+    "start": "NODE_ENV=production node build/index.js",
+    "dev": "NODE_ENV=development ts-node-dev src/index.ts",
     "lint": "eslint '*/**/*.{ts,tsx}'",
     "lint:fix": "eslint '*/**/*.{ts,tsx}' --fix",
-    "format": "prettier --write '*/**/*.{ts,tsx,json,md}'",
-    "start": "node build/index.js"
+    "format": "prettier --write '*/**/*.{ts,tsx,json,md}'"
   },
   "author": "",
   "license": "ISC",
