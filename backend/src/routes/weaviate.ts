@@ -86,9 +86,22 @@ weaviateRouter.post('/search', async (req, res) => {
     ).sort()
 
     const parsedResult = { groupedResult, references }
-    res.status(201).json({ response: JSON.stringify(parsedResult, null, 2) })
+    return res
+      .status(201)
+      .json({ response: JSON.stringify(parsedResult, null, 2) })
   } catch (error) {
-    res.status(500).json({ error })
+    if (
+      axios.isAxiosError(error) &&
+      error.response &&
+      error.response.status === 429
+    ) {
+      console.log('Hit rate limit. Consider retrying after some time.')
+      return res
+        .status(429)
+        .json({ error: 'Rate limit exceeded, please try again later' })
+    } else {
+      return res.status(500).json({ error: 'Internal server error' })
+    }
   }
 })
 
