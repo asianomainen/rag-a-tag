@@ -3,3 +3,4 @@ __pycache__
 venv
 .DS_Store
 mock_data.json
+ETL/pdf_files/*.pdf
