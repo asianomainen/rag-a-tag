@@ -10,7 +10,7 @@ load_dotenv()
 WEAVIATE_DB_URL = os.getenv("WEAVIATE_DB_URL")
 WEAVIATE_APIKEY = os.getenv("WEAVIATE_APIKEY")
 OPEN_AI_APIKEY = os.getenv("OPEN_AI_APIKEY")
-PDF_FILES_PATH = './pipeline/ETL/pdf_files/*.pdf'
+PDF_FILES_PATH = "pipeline/ETL/pdf_files/*"
 
 text_splitter = RecursiveCharacterTextSplitter(chunk_size=1200, chunk_overlap=120)
 client = weaviate.Client(
@@ -23,42 +23,43 @@ client = weaviate.Client(
 def process_pdf(file_path):
     data = []
 
-    with open(file_path, 'rb') as file:
+    with open(file_path, "rb") as file:
         reader = pypdf.PdfReader(file)
-        for page in reader.pages:
+        for i, page in enumerate(reader.pages):
             texts = text_splitter.split_text(page.extract_text())
-            for chunk in texts:
+            for j, chunk in enumerate(texts):
                 data.append({
                     "title": os.path.basename(file_path),
                     "content": chunk.replace("-\n", "").replace(".\n", ". ").replace("\n", " "),
+                    "page": i,
+                    "chunk": j
                 })
 
     return data
 
 
 def import_to_weaviate(data_objects):
-    # UNCOMMENT LINES BELOW TO RE-UPLOAD PDF'S TO WEAVIATE
-    # class_obj = {
-    #     "class": "ResearchPaper",
-    #     "vectorizer": "text2vec-openai",
-    #     "moduleConfig": {
-    #         "text2vec-openai": {},
-    #         "generative-openai": {}
-    #     }
-    # }
-    #
-    # client.schema.delete_class("ResearchPaper")  # to delete the class
-    # client.schema.create_class(class_obj)  # use this if "ResearchPaper" class is not created yet
+    class_obj = {
+        "class": "ResearchPaper",
+        "vectorizer": "text2vec-openai",
+        "moduleConfig": {
+            "text2vec-openai": {},
+            "generative-openai": {}
+        }
+    }
+
+    client.schema.delete_class("ResearchPaper")  # to delete the class
+    client.schema.create_class(class_obj)  # use this if "ResearchPaper" class is not created yet
 
     client.batch.configure(batch_size=100)
     with client.batch as batch:  # Initialize a batch process
-        for i, d in enumerate(data_objects):  # Batch import data
-            source_index = i + 1
-            print(f"importing question: {source_index}")
+        for i, data_object in enumerate(data_objects):  # Batch import data
+            print(f"Importing chunk {i}")
             properties = {
-                "title": d["title"],
-                "content": d["content"],
-                "chunk_index": d["title"] + f"_{source_index}"
+                "title": data_object["title"],
+                "content": data_object["content"],
+                "chunk_index": f'{data_object["title"]}, page {data_object["page"]}, chunk {data_object["chunk"]}',
+                "page": data_object["page"]
             }
             batch.add_data_object(
                 data_object=properties,
@@ -73,7 +74,8 @@ def main():
     for pdf_file in pdf_files:
         all_data.extend(process_pdf(pdf_file))
 
-    import_to_weaviate(all_data)
+    # UNCOMMENT LINE BELOW TO RE-UPLOAD PDFs TO WEAVIATE. WARNING: OVERWRITES ALL EXISTING FILES.
+    # import_to_weaviate(all_data)
 
 
 if __name__ == "__main__":
