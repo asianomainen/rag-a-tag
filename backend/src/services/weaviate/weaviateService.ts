@@ -15,12 +15,12 @@ export const executeWeaviateQuery = async (
   return await client.graphql
     .get()
     .withClassName('ResearchPaper')
+    .withFields('chunk_index content page')
     .withGenerate({
       groupedTask: generatePrompt,
       groupedProperties: ['content', 'title'],
     })
     .withNearText({ concepts })
-    .withFields('chunk_index content')
-    .withLimit(4)
+    .withLimit(5)
     .do()
 }

@@ -5,13 +5,6 @@ import { executeWeaviateQuery } from '../services/weaviate/weaviateService'
 
 const weaviateRouter = express.Router()
 
-weaviateRouter.get('/', async (_req, res) => {
-  const generatePrompt =
-    'You are an assistant. Answer ONLY with the facts given as a context. Answer shortly for the questions given by the user. Question: {What is the role of DevOps in software development?}'
-  const result = await executeWeaviateQuery(generatePrompt, ['devops'])
-  res.status(200).json({ response: JSON.stringify(result, null, 2) })
-})
-
 weaviateRouter.post('/search', async (req, res) => {
   const inputString = req.body.text
   if (!inputString) {
@@ -43,7 +36,11 @@ weaviateRouter.post('/search', async (req, res) => {
       result.data.Get.ResearchPaper[0]._additional.generate.groupedResult
 
     const references = result.data.Get.ResearchPaper.map((item: any) => {
-      return { chunk_index: item.chunk_index, content: item.content }
+      return {
+        chunk_index: item.chunk_index,
+        content: item.content,
+        page: item.page,
+      }
     }).sort()
 
     const parsedResult = { groupedResult, references }

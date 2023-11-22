@@ -1,20 +1,12 @@
-import {Test} from './Test'
+import {postPrompt} from '../services/apiService'
+import {FormattedGptResponse} from '../components/FormattedGptResponse'
 
 export const promptCommand = async (args) => {
     try {
-        //const apiResponse = await postPrompt(args)
+        const apiResponse = await postPrompt(args)
+        const responseObj = JSON.parse(apiResponse.response)
 
-        const responseObj = {
-            groupedResult: 'answer',
-            references: [
-                {chunk_index: 'Eka Chunkki', content: 'tekstiä ekasta chunkista wuwuuwuw'},
-                {chunk_index: 'Toka Chunkki', content: 'yoyoyo tokaa tekstiä'},
-            ],
-        }
-
-        //const responseObj = JSON.parse(apiResponse.response)
-
-        return <Test responseObj={responseObj} />
+        return <FormattedGptResponse responseObj={responseObj} />
     } catch (error) {
         return `Error: ${error.message}`
     }

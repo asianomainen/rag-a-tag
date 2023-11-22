@@ -85,9 +85,10 @@ body {
 }
 
 #ref {
-   all: unset 
+   all: unset;
 }
 
 #ref:hover {
     text-decoration: underline; 
+    cursor: pointer;
  }
