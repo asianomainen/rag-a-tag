@@ -83,3 +83,11 @@ body {
 .skeleton-fade-out {
     opacity: 0;
 }
+
+#ref {
+   all: unset 
+}
+
+#ref:hover {
+    text-decoration: underline; 
+ }

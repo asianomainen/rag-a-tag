@@ -1,16 +1,20 @@
-import {postPrompt} from '../services/apiService'
+import {Test} from './Test'
 
 export const promptCommand = async (args) => {
     try {
-        const apiResponse = await postPrompt(args)
+        //const apiResponse = await postPrompt(args)
 
-        const responseObj = JSON.parse(apiResponse.response)
+        const responseObj = {
+            groupedResult: 'answer',
+            references: [
+                {chunk_index: 'Eka Chunkki', content: 'tekstiä ekasta chunkista wuwuuwuw'},
+                {chunk_index: 'Toka Chunkki', content: 'yoyoyo tokaa tekstiä'},
+            ],
+        }
 
-        let output = `AI Answer: \n${responseObj.groupedResult}\n\nReferences:\n`
+        //const responseObj = JSON.parse(apiResponse.response)
 
-        output += responseObj.references.map((ref) => `- ${ref}`).join('\n')
-
-        return output
+        return <Test responseObj={responseObj} />
     } catch (error) {
         return `Error: ${error.message}`
     }

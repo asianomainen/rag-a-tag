@@ -18,4 +18,4 @@ This chat application uses RAG (Retrieval-Augmented Generation) approach and Ope
 
 ## ETL pipeline
 
-<img src="https://github.com/asianomainen/rag-a-tag/blob/main/docs/images/pipeline.drawio.png" width="100%" heigth="100%">
+<img src="https://github.com/asianomainen/rag-a-tag/blob/main/docs/images/pipeline2.drawio.png" width="100%" heigth="100%">
