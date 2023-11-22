@@ -10,7 +10,7 @@ const client: WeaviateClient = weaviate.client({
 
 export const executeWeaviateQuery = async (
   generatePrompt: string,
-  concepts: string[]
+  query: string
 ) => {
   return await client.graphql
     .get()
@@ -18,9 +18,12 @@ export const executeWeaviateQuery = async (
     .withFields('chunk_index content page')
     .withGenerate({
       groupedTask: generatePrompt,
-      groupedProperties: ['content', 'title'],
+      groupedProperties: ['title', 'content'],
     })
-    .withNearText({ concepts })
-    .withLimit(5)
+    .withHybrid({
+      query,
+      properties: ['content^4'],
+    })
+    .withLimit(6)
     .do()
 }

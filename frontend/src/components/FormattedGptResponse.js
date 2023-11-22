@@ -1,34 +1,29 @@
 import {useState} from 'react'
 import {Dialog} from 'primereact/dialog'
+import {Reference} from './Reference'
 
 export const FormattedGptResponse = ({responseObj}) => {
     const [isModalOpen, setIsModalOpen] = useState(false)
     const [currentReference, setCurrentReference] = useState({})
-    console.log(responseObj, "obk")
+
+    const textStyle = {display: 'flex', flexDirection: 'column', margin: '10px 0'}
 
     return (
         <>
-            <div style={{display: 'flex', flexDirection: 'column', margin: '10px 0'}}>
+            <div style={textStyle}>
                 <span>AI Answer:</span>
                 <span>{responseObj?.groupedResult}</span>
             </div>
-            <div style={{display: 'flex', flexDirection: 'column', margin: '10px 0'}}>
+            <div style={textStyle}>
                 <span>References:</span>
-                {responseObj?.references.map((ref) => {
+                {responseObj?.references.map((reference) => {
                     return (
-                        <span>
-                            -{' '}
-                            <button
-                                id="ref"
-                                key={ref?.chunk_index}
-                                onClick={() => {
-                                    setIsModalOpen(!isModalOpen)
-                                    setCurrentReference(ref)
-                                }}
-                            >
-                                {ref?.chunk_index}
-                            </button>
-                        </span>
+                        <Reference
+                            reference={reference}
+                            isModalOpen={isModalOpen}
+                            setIsModalOpen={setIsModalOpen}
+                            setCurrentReference={setCurrentReference}
+                        />
                     )
                 })}
                 <Dialog

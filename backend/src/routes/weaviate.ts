@@ -11,14 +11,29 @@ weaviateRouter.post('/search', async (req, res) => {
     return res.status(400).json({ error: 'text is required in request body' })
   }
 
-  const promptText = `You are an entity extractor now. Extract entities from the following text: '${inputString}'`
+  const promptText =
+    'You are an entity extractor now. Your task is to extract entities from a sentence which is given by the user. Return entities formatted as a comma-separated string. Do NOT return anything else except the entities from the sentence.'
   try {
     const response = await axios.post(
       OPEN_AI_API_URL,
       {
         model: 'gpt-3.5-turbo',
-        messages: [{ role: 'system', content: promptText }],
-        temperature: 0.7,
+        messages: [
+          { role: 'system', content: promptText },
+          { role: 'user', content: 'Tell me about microservice architecture' },
+          { role: 'assistant', content: 'microservice architecture' },
+          { role: 'user', content: 'What is Apache Kafka?' },
+          { role: 'assistant', content: 'Apache Kafka' },
+          { role: 'user', content: 'How can I test Kafka?' },
+          { role: 'assistant', content: 'test, Kafka' },
+          {
+            role: 'user',
+            content: 'What are best practises when using Kafka?',
+          },
+          { role: 'assistant', content: 'best practises, Kafka' },
+          { role: 'user', content: inputString },
+        ],
+        temperature: 0.2,
       },
       {
         headers: {
@@ -28,9 +43,13 @@ weaviateRouter.post('/search', async (req, res) => {
       }
     )
 
-    const entities = response.data.choices[0].message.content.trim()
+    const entities = response.data.choices[0].message.content
+      .trim()
+      .split(',')
+      .join(' ')
+
     const generatePrompt = `You are an assistant. Answer ONLY with the facts given as a context. Answer shortly for the questions given by the user. Question: ${inputString}`
-    const result = await executeWeaviateQuery(generatePrompt, [entities])
+    const result = await executeWeaviateQuery(generatePrompt, entities)
 
     const groupedResult =
       result.data.Get.ResearchPaper[0]._additional.generate.groupedResult
